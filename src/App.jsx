@@ -19,12 +19,14 @@ export default function App() {
 	const [movies, setMovies] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const fetchMovies = async function () {
+	const fetchMovies = async function (query = "") {
 		setIsLoading(true);
 		setErrorMessage("");
 
 		try {
-			const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+			const endpoint = query
+				? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
+				: `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
 			const res = await fetch(endpoint, API_OPTIONS);
 
 			if (!res.ok) {
@@ -48,9 +50,12 @@ export default function App() {
 		}
 	};
 
-	useEffect(function () {
-		fetchMovies();
-	}, []);
+	useEffect(
+		function () {
+			fetchMovies(searchTerm);
+		},
+		[searchTerm]
+	);
 
 	return (
 		<main>
